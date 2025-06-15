@@ -3,193 +3,238 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Générateur PowerPoint Moderne</title>
+<title>Générateur PowerPoint Coloré & Moderne</title>
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
 <style>
-  /* Reset & base */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
   body {
     margin: 0; padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
-    color: #222;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: #fff;
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 30px 15px;
+    padding: 40px 20px;
   }
   .container {
-    background: white;
+    background: #fff;
+    color: #222;
     max-width: 900px;
     width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    padding: 40px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Arrière-plan géométrique coloré */
+  .container::before {
+    content: "";
+    position: absolute;
+    top: -120px; left: -120px;
+    width: 300px; height: 300px;
+    background: #6a11cb;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    opacity: 0.3;
+    z-index: 0;
+  }
+  .container::after {
+    content: "";
+    position: absolute;
+    bottom: -140px; right: -140px;
+    width: 320px; height: 320px;
+    background: #2575fc;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    opacity: 0.3;
+    z-index: 0;
   }
   h1 {
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 5px;
+    font-weight: 700;
+    font-size: 2.8rem;
+    color: #1e1e2f;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
   }
   p.subtitle {
-    color: #7f8c8d;
-    margin-bottom: 30px;
-    font-size: 1.1rem;
+    color: #555770;
+    font-size: 1.15rem;
+    margin-bottom: 36px;
+    position: relative;
+    z-index: 1;
   }
   label {
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
-    color: #34495e;
+    color: #44475a;
+    font-size: 1rem;
   }
   input[type="text"], select, textarea {
     width: 100%;
-    padding: 12px 15px;
-    border: 1.8px solid #bdc3c7;
-    border-radius: 8px;
+    padding: 14px 18px;
+    border: 2px solid #6a11cb;
+    border-radius: 15px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
     font-family: inherit;
-    resize: vertical;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background: #f8f9ff;
+    color: #222;
   }
   input[type="text"]:focus, select:focus, textarea:focus {
-    border-color: #2980b9;
+    border-color: #2575fc;
     outline: none;
-    box-shadow: 0 0 8px rgba(41, 128, 185, 0.3);
+    box-shadow: 0 0 12px rgba(37, 117, 252, 0.6);
+    background: #fff;
   }
   textarea {
-    min-height: 100px;
+    min-height: 110px;
+    resize: vertical;
   }
   .slides-container {
-    margin-top: 25px;
-    border: 1px solid #dfe6e9;
-    border-radius: 10px;
-    padding: 20px;
-    background: #fafafa;
-    max-height: 450px;
+    margin-top: 28px;
+    border: 3px solid #6a11cb;
+    border-radius: 20px;
+    padding: 30px 36px;
+    background: #eef2ff;
+    max-height: 480px;
     overflow-y: auto;
+    position: relative;
+    z-index: 1;
   }
   .slide-item {
     background: white;
-    border: 1px solid #dcdde1;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
+    border-radius: 20px;
+    padding: 24px 30px;
+    margin-bottom: 28px;
     position: relative;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 16px rgba(106, 17, 203, 0.15);
+    transition: box-shadow 0.3s ease;
+  }
+  .slide-item:hover {
+    box-shadow: 0 8px 28px rgba(37, 117, 252, 0.3);
   }
   .slide-item h4 {
-    margin-bottom: 15px;
-    color: #2980b9;
-    font-weight: 600;
+    margin-bottom: 18px;
+    color: #6a11cb;
+    font-weight: 700;
+    font-size: 1.4rem;
   }
   .remove-slide {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: #e74c3c;
+    top: 16px;
+    right: 16px;
+    background: #ff3860;
     border: none;
     color: white;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
-    line-height: 28px;
+    line-height: 32px;
     text-align: center;
     transition: background-color 0.3s ease;
   }
   .remove-slide:hover {
-    background: #c0392b;
+    background: #d32f4a;
   }
   select {
-    margin-top: 10px;
+    margin-top: 14px;
+    font-weight: 700;
+    color: #6a11cb;
   }
   .image-upload {
-    margin-top: 12px;
+    margin-top: 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
   }
   .image-upload label {
-    background: #2980b9;
+    background: #2575fc;
     color: white;
-    padding: 8px 18px;
-    border-radius: 8px;
+    padding: 10px 26px;
+    border-radius: 20px;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 1rem;
     user-select: none;
     transition: background-color 0.3s ease;
   }
   .image-upload label:hover {
-    background: #1c5980;
+    background: #1b54b5;
   }
   .image-upload input[type="file"] {
     display: none;
   }
   .image-preview {
-    max-width: 120px;
-    max-height: 80px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+    max-width: 140px;
+    max-height: 90px;
+    border-radius: 12px;
+    border: 2px solid #d1d8de;
     object-fit: contain;
     display: none;
+    box-shadow: 0 4px 12px rgba(37, 117, 252, 0.15);
   }
   .image-info {
-    font-size: 0.85rem;
-    color: #7f8c8d;
+    font-size: 0.9rem;
+    color: #6a11cb;
+    font-style: italic;
   }
   .controls {
-    margin-top: 15px;
+    margin-top: 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    z-index: 1;
   }
   button.btn {
     cursor: pointer;
     border: none;
-    border-radius: 10px;
+    border-radius: 24px;
     font-weight: 700;
-    font-size: 1.1rem;
-    padding: 14px 36px;
+    font-size: 1.25rem;
+    padding: 18px 52px;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
   }
   button.btn-primary {
-    background-color: #2980b9;
+    background-color: #6a11cb;
     color: white;
-    box-shadow: 0 6px 12px rgba(41, 128, 185, 0.4);
+    box-shadow: 0 10px 24px rgba(106, 17, 203, 0.5);
   }
   button.btn-primary:hover {
-    background-color: #1c5980;
-    box-shadow: 0 8px 16px rgba(28, 89, 128, 0.6);
+    background-color: #4e0ea6;
+    box-shadow: 0 14px 32px rgba(78, 14, 166, 0.7);
   }
   button.btn-secondary {
-    background-color: #7f8c8d;
+    background-color: #2575fc;
     color: white;
+    box-shadow: 0 6px 18px rgba(37, 117, 252, 0.5);
   }
   button.btn-secondary:hover {
-    background-color: #636e72;
+    background-color: #1b54b5;
+    box-shadow: 0 8px 24px rgba(27, 84, 181, 0.7);
   }
   .loading {
-    margin-top: 20px;
+    margin-top: 32px;
     display: none;
     align-items: center;
-    gap: 10px;
-    color: #2980b9;
-    font-weight: 600;
+    gap: 14px;
+    color: #6a11cb;
+    font-weight: 700;
+    font-size: 1.15rem;
   }
   .loading.active {
     display: flex;
   }
   .spinner {
-    width: 22px;
-    height: 22px;
-    border: 3px solid #dfe6e9;
-    border-top-color: #2980b9;
+    width: 26px;
+    height: 26px;
+    border: 4px solid #dcd6f7;
+    border-top-color: #6a11cb;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -197,15 +242,18 @@
     to { transform: rotate(360deg); }
   }
   .success-message {
-    margin-top: 20px;
-    background-color: #dff9d6;
-    border: 1.5px solid #27ae60;
+    margin-top: 32px;
+    background-color: #d4f7dc;
+    border: 2px solid #27ae60;
     color: #27ae60;
     font-weight: 700;
-    padding: 15px 20px;
-    border-radius: 10px;
+    padding: 18px 26px;
+    border-radius: 24px;
     display: none;
     text-align: center;
+    font-size: 1.2rem;
+    position: relative;
+    z-index: 1;
   }
   .success-message.active {
     display: block;
@@ -213,11 +261,11 @@
 </style>
 </head>
 <body>
-  <div class="container" role="main" aria-label="Générateur de présentation PowerPoint">
+  <main class="container" role="main" aria-label="Générateur de présentation PowerPoint coloré et moderne">
     <h1>Générateur PowerPoint</h1>
-    <p class="subtitle">Créez vos présentations personnalisées simplement, avec images et contenus.</p>
+    <p class="subtitle">Créez des présentations dynamiques et colorées avec vos contenus et images.</p>
 
-    <form id="presentationForm" aria-describedby="formInstructions" style="opacity: 0.5;">
+    <form id="presentationForm" style="opacity: 0.5;">
       <div class="form-group">
         <label for="title">Titre de la présentation <sup aria-label="obligatoire">*</sup></label>
         <input type="text" id="title" name="title" placeholder="Ex: Ma présentation incroyable" required autocomplete="off" />
@@ -231,11 +279,11 @@
       <div class="form-group">
         <label for="theme">Thème de couleur</label>
         <select id="theme" name="theme" aria-label="Choisir un thème de couleur">
-          <option value="blue">Bleu professionnel</option>
+          <option value="blue">Violet & Bleu</option>
           <option value="green">Vert nature</option>
-          <option value="purple">Violet créatif</option>
-          <option value="orange">Orange énergique</option>
-          <option value="red">Rouge dynamique</option>
+          <option value="orange">Orange & Corail</option>
+          <option value="red">Rouge & Rose</option>
+          <option value="purple">Prune & Lavande</option>
         </select>
       </div>
 
@@ -248,7 +296,7 @@
         </div>
       </div>
 
-      <div style="text-align:center; margin-top: 35px;">
+      <div style="text-align:center; margin-top: 40px;">
         <button type="submit" class="btn btn-primary" aria-label="Générer et télécharger la présentation PowerPoint">📥 Générer et Télécharger PowerPoint</button>
       </div>
 
@@ -261,16 +309,16 @@
         ✅ Présentation générée avec succès ! Le téléchargement va commencer automatiquement.
       </div>
     </form>
-  </div>
+  </main>
 
 <script>
   let slideCounter = 0;
   const themes = {
-    blue: { primary: '4472C4', secondary: '70AD47', background: 'FFFFFF' },
-    green: { primary: '70AD47', secondary: '4472C4', background: 'FFFFFF' },
-    purple: { primary: '7030A0', secondary: 'C55A11', background: 'FFFFFF' },
-    orange: { primary: 'C55A11', secondary: '7030A0', background: 'FFFFFF' },
-    red: { primary: 'C5504B', secondary: '4472C4', background: 'FFFFFF' }
+    blue: { primary: '6a11cb', secondary: '2575fc', background: 'f0f4ff' },
+    green: { primary: '27ae60', secondary: '2ecc71', background: 'e6f4ea' },
+    orange: { primary: 'e67e22', secondary: 'f39c12', background: 'fff5e6' },
+    red: { primary: 'e74c3c', secondary: 'ff6f61', background: 'ffe6e6' },
+    purple: { primary: '8e44ad', secondary: '9b59b6', background: 'f3e6ff' }
   };
 
   const defaultSlides = [
@@ -286,7 +334,6 @@
     "Diapo contact"
   ];
 
-  // Ajoute une diapositive, optionnellement avec titre par défaut
   function addSlide(defaultTitle = "") {
     slideCounter++;
     const container = document.getElementById('slidesContainer');
@@ -346,7 +393,6 @@
     document.getElementById('slideCount').textContent = `${count} diapositive(s)`;
   }
 
-  // Initialise le formulaire avec les diapositives par défaut
   document.addEventListener('DOMContentLoaded', () => {
     checkLibraryLoaded();
     defaultSlides.forEach(title => addSlide(title));
@@ -390,9 +436,8 @@
       pptx.title = title;
       pptx.subject = 'Présentation générée automatiquement';
 
-      // Génère toutes les diapositives saisies (fixes + ajoutées)
       const slides = document.querySelectorAll('.slide-item');
-      const slidePromises = Array.from(slides).map(async (slideElem, idx) => {
+      const slidePromises = Array.from(slides).map(async (slideElem) => {
         const inputs = slideElem.querySelectorAll('input[type="text"], textarea, select');
         const slideTitle = inputs[0].value.trim();
         const slideContent = inputs[1].value.trim();
@@ -447,7 +492,6 @@
         }
       });
 
-      // Ajoute les diapositives fixes de fin automatiquement
       endSlides.forEach(title => {
         const slide = pptx.addSlide();
         slide.background = { color: theme.background };
