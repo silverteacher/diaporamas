@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Générateur PowerPoint Coloré & Pastel</title>
+<title>Générateur PowerPoint Pastel & Moderne</title>
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
@@ -12,7 +12,6 @@
   body {
     margin: 0; padding: 0;
     font-family: 'Poppins', sans-serif;
-    /* Dégradé pastel bleu doux */
     background: linear-gradient(135deg, #c7d8e8 0%, #e9f0f7 100%);
     color: #222;
     min-height: 100vh;
@@ -29,7 +28,7 @@
     box-shadow: 0 20px 40px rgba(0,0,0,0.12);
     padding: 40px 50px;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
   .container::before {
     content: "";
@@ -100,8 +99,7 @@
     border-radius: 20px;
     padding: 30px 36px;
     background: #e8f0ff;
-    max-height: 480px;
-    overflow-y: auto;
+    /* Pas de max-height ni overflow pour scroll sur page entière */
     position: relative;
     z-index: 1;
   }
@@ -267,7 +265,7 @@
 </style>
 </head>
 <body>
-  <main class="container" role="main" aria-label="Générateur de présentation PowerPoint coloré et pastel avec réorganisation">
+  <main class="container" role="main" aria-label="Générateur de présentation PowerPoint pastel et moderne avec réorganisation">
     <h1>Générateur PowerPoint</h1>
     <p class="subtitle">Créez des présentations pastel, dynamiques et personnalisées avec images. Glissez-déposez les diapositives pour les réorganiser.</p>
 
@@ -327,7 +325,6 @@
     purple: { primary: '8e44ad', secondary: 'bb8fce', background: 'f3e6ff' }
   };
 
-  // Tes diapositives fixes en début
   const defaultSlides = [
     "Diapo avec le titre et l'illustration",
     "Diapo avec le temps de la visio",
@@ -335,7 +332,6 @@
     "Diapo avec le sommaire",
     "Diapo brise glace"
   ];
-  // Tes diapositives fixes en fin
   const endSlides = [
     "Diapo Pause",
     "Diapo des questions",
