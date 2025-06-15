@@ -1,237 +1,483 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.4">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Générateur PowerPoint</title>
+  <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 {
+      font-weight: 300;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1em;
+    }
+    form {
+      padding: 40px;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+    .form-group {
+      margin-bottom: 25px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 1.1em;
+      color: #333;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .slides-container {
+      border: 2px dashed #e1e5e9;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 10px;
+    }
+    .slide-item {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+    .slide-item h4 {
+      color: #667eea;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .remove-slide {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 28px;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+    .remove-slide:hover {
+      background: #c82333;
+    }
+    .image-upload {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .image-upload input[type="file"] {
+      display: none;
+    }
+    .image-upload label {
+      background: #007bff;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .image-upload label:hover {
+      background: #0056b3;
+    }
+    .image-preview {
+      max-width: 100px;
+      max-height: 60px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: none;
+    }
+    .image-info {
+      font-size: 12px;
+      color: #666;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e9ecef;
+    }
+    button.btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+    button.btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    button.btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    button.btn-secondary {
+      background: #6c757d;
+      color: white;
+      margin-right: 10px;
+    }
+    button.btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-1px);
+    }
+    button.btn-success {
+      background: #28a745;
+      color: white;
+      font-size: 18px;
+      padding: 15px 40px;
+    }
+    button.btn-success:hover {
+      background: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+    }
+    .loading {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #667eea;
+    }
+    .loading.active {
+      display: flex;
+    }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #e1e5e9;
+      border-top: 2px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+      font-weight: 600;
+    }
+    .success-message.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">let slideCounter = 0;</p>
-<p class="p1">const themes = {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>blue: { primary: '4472C4', secondary: '70AD47', background: 'FFFFFF' },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>green: { primary: '70AD47', secondary: '4472C4', background: 'FFFFFF' },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>purple: { primary: '7030A0', secondary: 'C55A11', background: 'FFFFFF' },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>orange: { primary: 'C55A11', secondary: '7030A0', background: 'FFFFFF' },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>red: { primary: 'C5504B', secondary: '4472C4', background: 'FFFFFF' }</p>
-<p class="p1">};</p>
-<p class="p2"><br></p>
-<p class="p1">// Titres des diapositives fixes au début</p>
-<p class="p1">const defaultSlides = [</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"Diapo avec le titre et l'illustration",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"Diapo avec le temps de la visio",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"Diapo avec la présentation des animateurs",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"Diapo avec le sommaire",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"Diapo brise glace"</p>
-<p class="p1">];</p>
-<p class="p1">// Titres des diapositives fixes à la fin</p>
-<p class="p1">const endSlides = [</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"Diapo Pause",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"Diapo des questions",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>"Diapo contact"</p>
-<p class="p1">];</p>
-<p class="p2"><br></p>
-<p class="p1">// Ajoute une diapositive (optionnellement pré-remplie)</p>
-<p class="p1">function addSlide(defaultTitle = "") {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>slideCounter++;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const slidesContainer = document.getElementById('slidesContainer');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const slideDiv = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>slideDiv.className = 'slide-item';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>slideDiv.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button type="button" class="remove-slide" onclick="removeSlide(this)"&gt;×&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h4&gt;${defaultTitle ? defaultTitle : `Diapositive ${slideCounter}`}&lt;/h4&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="text" placeholder="Titre de la diapositive" name="slideTitle${slideCounter}" value="${defaultTitle}" required&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;textarea placeholder="Contenu de la diapositive (vous pouvez utiliser des puces avec - ou •)" name="slideContent${slideCounter}" required&gt;&lt;/textarea&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;select name="slideLayout${slideCounter}" onchange="toggleImageUpload(this, ${slideCounter})"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="title"&gt;Titre et contenu&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="bullets"&gt;Liste à puces&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="image"&gt;Titre et image&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="image-upload" id="imageUpload${slideCounter}" style="display: none;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="imageFile${slideCounter}"&gt;📁 Choisir une image&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="file" id="imageFile${slideCounter}" accept="image/*" onchange="previewImage(this, ${slideCounter})"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;img class="image-preview" id="imagePreview${slideCounter}" alt="Aperçu"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;span class="image-info" id="imageInfo${slideCounter}"&gt;&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>slidesContainer.appendChild(slideDiv);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>updateSlideCount();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function toggleImageUpload(selectElement, slideNumber) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const imageUpload = document.getElementById(`imageUpload${slideNumber}`);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (selectElement.value === 'image') {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>imageUpload.style.display = 'flex';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>imageUpload.style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function previewImage(input, slideNumber) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const preview = document.getElementById(`imagePreview${slideNumber}`);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const info = document.getElementById(`imageInfo${slideNumber}`);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (input.files &amp;&amp; input.files[0]) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const file = input.files[0];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const reader = new FileReader();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>reader.onload = function(e) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>preview.src = e.target.result;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>preview.style.display = 'block';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>info.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>};</p>
-<p class="p1"><span class="Apple-converted-space">        </span>reader.readAsDataURL(file);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function removeSlide(button) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>button.parentElement.remove();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>updateSlideCount();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function updateSlideCount() {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const count = document.querySelectorAll('.slide-item').length;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('slideCount').textContent = `${count} diapositive(s)`;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// Initialisation : Ajoute les diapositives fixes du début</p>
-<p class="p1">document.addEventListener('DOMContentLoaded', function() {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>checkLibraryLoaded();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>defaultSlides.forEach(title =&gt; addSlide(title));</p>
-<p class="p1">});</p>
-<p class="p2"><br></p>
-<p class="p1">// Vérifie que la librairie est chargée</p>
-<p class="p1">function checkLibraryLoaded() {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const maxAttempts = 50;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let attempts = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const checkInterval = setInterval(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>attempts++;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (typeof PptxGenJS !== 'undefined') {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>clearInterval(checkInterval);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('presentationForm').style.opacity = '1';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>} else if (attempts &gt;= maxAttempts) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>clearInterval(checkInterval);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>alert('Erreur: Impossible de charger la bibliothèque PowerPoint. Veuillez actualiser la page.');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}, 100);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// Gestion du formulaire</p>
-<p class="p1">document.getElementById('presentationForm').addEventListener('submit', function(e) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>e.preventDefault();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>generatePowerPoint();</p>
-<p class="p1">});</p>
-<p class="p2"><br></p>
-<p class="p1">async function generatePowerPoint() {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const loading = document.getElementById('loading');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const successMessage = document.getElementById('successMessage');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>loading.classList.add('active');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>successMessage.classList.remove('active');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (typeof PptxGenJS === 'undefined') {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>throw new Error('La bibliothèque PowerPoint n\'est pas encore chargée. Veuillez attendre et réessayer.');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const pptx = new PptxGenJS();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const formData = new FormData(document.getElementById('presentationForm'));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const title = formData.get('title');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const author = formData.get('author');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const themeName = formData.get('theme');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const theme = themes[themeName];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>pptx.author = author || 'Générateur PowerPoint';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>pptx.title = title;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>pptx.subject = 'Présentation générée automatiquement';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Diapositive de titre (optionnelle, car déjà dans la liste si tu veux la personnaliser)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// const titleSlide = pptx.addSlide();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// titleSlide.background = { color: theme.background };</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// titleSlide.addText(title, {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// <span class="Apple-converted-space">    </span>x: 1, y: 2, w: 8, h: 2, fontSize: 44, color: theme.primary, bold: true, align: 'center'</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// });</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// if (author) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// <span class="Apple-converted-space">    </span>titleSlide.addText(`Par ${author}`, {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// <span class="Apple-converted-space">        </span>x: 1, y: 4.5, w: 8, h: 1, fontSize: 24, color: theme.secondary, align: 'center'</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// <span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// titleSlide.addText(new Date().toLocaleDateString('fr-FR'), {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// <span class="Apple-converted-space">    </span>x: 1, y: 6, w: 8, h: 0.5, fontSize: 16, color: '666666', align: 'center'</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// });</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Slides dynamiques (fixes du début + ajoutées par utilisateur)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const slides = document.querySelectorAll('.slide-item');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const slidePromises = Array.from(slides).map(async (slideElement, index) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const inputs = slideElement.querySelectorAll('input, textarea, select');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const slideTitle = inputs[0].value;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const slideContent = inputs[1].value;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const slideLayout = inputs[2].value;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const slide = pptx.addSlide();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>slide.background = { color: theme.background };</p>
-<p class="p1"><span class="Apple-converted-space">            </span>slide.addText(slideTitle, {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>x: 0.5, y: 0.5, w: 9, h: 1, fontSize: 28, color: theme.primary, bold: true</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (slideLayout === 'bullets') {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const bulletPoints = slideContent.split('\n')</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>.filter(line =&gt; line.trim())</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>.map(line =&gt; line.replace(/^[-•]\s*/, ''));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>slide.addText(bulletPoints, {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>x: 0.5, y: 1.8, w: 9, h: 5, fontSize: 18, color: '333333', bullet: true</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else if (slideLayout === 'image') {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>slide.addText(slideContent, {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>x: 0.5, y: 1.8, w: 4.5, h: 3, fontSize: 16, color: '333333', valign: 'top'</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const imageInput = slideElement.querySelector('input[type="file"]');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (imageInput &amp;&amp; imageInput.files &amp;&amp; imageInput.files[0]) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>return new Promise((resolve) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>const reader = new FileReader();</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>reader.onload = function(e) {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>slide.addImage({</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>data: e.target.result,</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>x: 5.5, y: 2, w: 4, h: 3</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>resolve();</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>};</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>reader.readAsDataURL(imageInput.files[0]);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>slide.addText('📷\n[Aucune image sélectionnée]\nUtilisez le bouton "Choisir une image"', {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>x: 5.5, y: 2, w: 4, h: 3, fontSize: 14, color: '888888',</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>align: 'center', valign: 'middle', fill: { color: 'F5F5F5' },</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>line: { color: 'CCCCCC', width: 1 }</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>slide.addText(slideContent, {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>x: 0.5, y: 1.8, w: 9, h: 5, fontSize: 18, color: '333333', valign: 'top'</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Ajoute les diapositives fixes de fin</p>
-<p class="p1"><span class="Apple-converted-space">        </span>endSlides.forEach(title =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const slide = pptx.addSlide();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>slide.background = { color: theme.background };</p>
-<p class="p1"><span class="Apple-converted-space">            </span>slide.addText(title, {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>x: 0.5, y: 0.5, w: 9, h: 1, fontSize: 28, color: theme.primary, bold: true</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>await Promise.all(slidePromises);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const fileName = title ? `${title.replace(/[^\w\s]/gi, '')}.pptx` : 'presentation.pptx';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>await pptx.writeFile({ fileName: fileName });</p>
-<p class="p1"><span class="Apple-converted-space">        </span>loading.classList.remove('active');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>successMessage.classList.add('active');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setTimeout(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>successMessage.classList.remove('active');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}, 5000);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} catch (error) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>loading.classList.remove('active');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>alert('Une erreur est survenue lors de la génération du PowerPoint. Veuillez réessayer.');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1">}</p>
-<p class="p1">&lt;/script&gt;</p>
+  <div class="container">
+    <div class="header">
+      <h1>🎨 Générateur PowerPoint</h1>
+      <p>Créez vos présentations personnalisées en quelques clics</p>
+    </div>
+    <form id="presentationForm" style="opacity: 0.5;">
+      <div class="form-group">
+        <label for="title">Titre de la présentation</label>
+        <input type="text" id="title" name="title" placeholder="Ex: Ma présentation incroyable" required />
+      </div>
+      <div class="form-group">
+        <label for="author">Auteur</label>
+        <input type="text" id="author" name="author" placeholder="Votre nom" />
+      </div>
+      <div class="form-group">
+        <label for="theme">Thème de couleur</label>
+        <select id="theme" name="theme">
+          <option value="blue">Bleu professionnel</option>
+          <option value="green">Vert nature</option>
+          <option value="purple">Violet créatif</option>
+          <option value="orange">Orange énergique</option>
+          <option value="red">Rouge dynamique</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Diapositives</label>
+        <div class="slides-container" id="slidesContainer"></div>
+        <div class="controls">
+          <button type="button" class="btn btn-secondary" onclick="addSlide()">+ Ajouter une diapositive</button>
+          <span id="slideCount">0 diapositive(s)</span>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:30px;">
+        <button type="submit" class="btn btn-success">📥 Générer et Télécharger PowerPoint</button>
+      </div>
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <span>Génération en cours...</span>
+      </div>
+      <div class="success-message" id="successMessage">
+        ✅ Présentation générée avec succès ! Le téléchargement va commencer automatiquement.
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let slideCounter = 0;
+    const themes = {
+      blue: { primary: '4472C4', secondary: '70AD47', background: 'FFFFFF' },
+      green: { primary: '70AD47', secondary: '4472C4', background: 'FFFFFF' },
+      purple: { primary: '7030A0', secondary: 'C55A11', background: 'FFFFFF' },
+      orange: { primary: 'C55A11', secondary: '7030A0', background: 'FFFFFF' },
+      red: { primary: 'C5504B', secondary: '4472C4', background: 'FFFFFF' }
+    };
+
+    const defaultSlides = [
+      "Diapo avec le titre et l'illustration",
+      "Diapo avec le temps de la visio",
+      "Diapo avec la présentation des animateurs",
+      "Diapo avec le sommaire",
+      "Diapo brise glace"
+    ];
+    const endSlides = [
+      "Diapo Pause",
+      "Diapo des questions",
+      "Diapo contact"
+    ];
+
+    function addSlide(defaultTitle = "") {
+      slideCounter++;
+      const slidesContainer = document.getElementById('slidesContainer');
+      const slideDiv = document.createElement('div');
+      slideDiv.className = 'slide-item';
+      slideDiv.innerHTML = `
+        <button type="button" class="remove-slide" onclick="removeSlide(this)">×</button>
+        <h4>${defaultTitle ? defaultTitle : `Diapositive ${slideCounter}`}</h4>
+        <input type="text" placeholder="Titre de la diapositive" name="slideTitle${slideCounter}" value="${defaultTitle}" required />
+        <textarea placeholder="Contenu de la diapositive (vous pouvez utiliser des puces avec - ou •)" name="slideContent${slideCounter}" required></textarea>
+        <select name="slideLayout${slideCounter}" onchange="toggleImageUpload(this, ${slideCounter})">
+          <option value="title">Titre et contenu</option>
+          <option value="bullets">Liste à puces</option>
+          <option value="image">Titre et image</option>
+        </select>
+        <div class="image-upload" id="imageUpload${slideCounter}" style="display: none;">
+          <label for="imageFile${slideCounter}">📁 Choisir une image</label>
+          <input type="file" id="imageFile${slideCounter}" accept="image/*" onchange="previewImage(this, ${slideCounter})" />
+          <img class="image-preview" id="imagePreview${slideCounter}" alt="Aperçu" />
+          <span class="image-info" id="imageInfo${slideCounter}"></span>
+        </div>
+      `;
+      slidesContainer.appendChild(slideDiv);
+      updateSlideCount();
+    }
+
+    function toggleImageUpload(selectElement, slideNumber) {
+      const imageUpload = document.getElementById(`imageUpload${slideNumber}`);
+      if (selectElement.value === 'image') {
+        imageUpload.style.display = 'flex';
+      } else {
+        imageUpload.style.display = 'none';
+      }
+    }
+
+    function previewImage(input, slideNumber) {
+      const preview = document.getElementById(`imagePreview${slideNumber}`);
+      const info = document.getElementById(`imageInfo${slideNumber}`);
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+          info.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeSlide(button) {
+      button.parentElement.remove();
+      updateSlideCount();
+    }
+
+    function updateSlideCount() {
+      const count = document.querySelectorAll('.slide-item').length;
+      document.getElementById('slideCount').textContent = `${count} diapositive(s)`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      checkLibraryLoaded();
+      defaultSlides.forEach(title => addSlide(title));
+    });
+
+    function checkLibraryLoaded() {
+      const maxAttempts = 50;
+      let attempts = 0;
+      const checkInterval = setInterval(() => {
+        attempts++;
+        if (typeof PptxGenJS !== 'undefined') {
+          clearInterval(checkInterval);
+          document.getElementById('presentationForm').style.opacity = '1';
+        } else if (attempts >= maxAttempts) {
+          clearInterval(checkInterval);
+          alert('Erreur: Impossible de charger la bibliothèque PowerPoint. Veuillez actualiser la page.');
+        }
+      }, 100);
+    }
+
+    document.getElementById('presentationForm').addEventListener('submit', e => {
+      e.preventDefault();
+      generatePowerPoint();
+    });
+
+    async function generatePowerPoint() {
+      const loading = document.getElementById('loading');
+      const successMessage = document.getElementById('successMessage');
+      loading.classList.add('active');
+      successMessage.classList.remove('active');
+      try {
+        if (typeof PptxGenJS === 'undefined') {
+          throw new Error('La bibliothèque PowerPoint n\'est pas encore chargée. Veuillez attendre et réessayer.');
+        }
+        const pptx = new PptxGenJS();
+        const formData = new FormData(document.getElementById('presentationForm'));
+        const title = formData.get('title');
+        const author = formData.get('author');
+        const themeName = formData.get('theme');
+        const theme = themes[themeName];
+        pptx.author = author || 'Générateur PowerPoint';
+        pptx.title = title;
+        pptx.subject = 'Présentation générée automatiquement';
+
+        // Génère toutes les diapositives ajoutées par l'utilisateur (y compris les fixes du début)
+        const slides = document.querySelectorAll('.slide-item');
+        const slidePromises = Array.from(slides).map(async (slideElement, index) => {
+          const inputs = slideElement.querySelectorAll('input, textarea, select');
+          const slideTitle = inputs[0].value;
+          const slideContent = inputs[1].value;
+          const slideLayout = inputs[2].value;
+          const slide = pptx.addSlide();
+          slide.background = { color: theme.background };
+          slide.addText(slideTitle, {
+            x: 0.5, y: 0.5, w: 9, h: 1,
+            fontSize: 28, color: theme.primary, bold: true
+          });
+          if (slideLayout === 'bullets') {
+            const bulletPoints = slideContent.split('\n')
+              .filter(line => line.trim())
+              .map(line => line.replace(/^[-•]\s*/, ''));
+            slide.addText(bulletPoints, {
+              x: 0.5, y: 1.8, w: 9, h: 5,
+              fontSize: 18, color: '333333', bullet: true
+            });
+          } else if (slideLayout === 'image') {
+            slide.addText(slideContent, {
+              x: 0.5, y: 1.8, w: 4.5, h: 3,
+              fontSize: 16, color: '333333', valign: 'top'
+            });
+            const imageInput = slideElement.querySelector('input[type="file"]');
+            if (imageInput && imageInput.files && imageInput.files[0]) {
+              return new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                  slide.addImage({
+                    data: e.target.result,
+                    x: 5.5, y: 2, w: 4, h: 3
+                  });
+                  resolve();
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+              });
+            } else {
+              slide.addText('📷\n[Aucune image sélectionnée]\nUtilisez le bouton "Choisir une image"', {
+                x: 5.5, y: 2, w: 4, h: 3,
+                fontSize: 14, color: '888888',
+                align: 'center', valign: 'middle',
+                fill: { color: 'F5F5F5' },
+                line: { color: 'CCCCCC', width: 1 }
+              });
+            }
+          } else {
+            slide.addText(slideContent, {
+              x: 0.5, y: 1.8, w: 9, h: 5,
+              fontSize: 18, color: '333333', valign: 'top'
+            });
+          }
+        });
+
+        // Ajoute les diapositives fixes de fin
+        endSlides.forEach(title => {
+          const slide = pptx.addSlide();
+          slide.background = { color: theme.background };
+          slide.addText(title, {
+            x: 0.5, y: 0.5, w: 9, h: 1,
+            fontSize: 28, color: theme.primary, bold: true
+          });
+        });
+
+        await Promise.all(slidePromises);
+        const fileName = title ? `${title.replace(/[^\w\s]/gi, '')}.pptx` : 'presentation.pptx';
+        await pptx.writeFile({ fileName });
+        loading.classList.remove('active');
+        successMessage.classList.add('active');
+        setTimeout(() => successMessage.classList.remove('active'), 5000);
+      } catch (error) {
+        loading.classList.remove('active');
+        alert('Une erreur est survenue lors de la génération du PowerPoint. Veuillez réessayer.');
+        console.error(error);
+      }
+    }
+  </script>
 </body>
 </html>
