@@ -143,6 +143,18 @@
   .remove-slide:hover {
     background: #c53030;
   }
+  .slide-option {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1rem;
+    color: #5a8de0;
+    font-weight: 700;
+  }
   select {
     margin-top: 14px;
     font-weight: 700;
@@ -298,10 +310,6 @@
         </div>
       </div>
 
-      <div class="form-group" style="margin-top: 20px;">
-        <label><input type="checkbox" id="includeEndSlides" name="includeEndSlides" /> Inclure les 3 diapositives de fin</label>
-      </div>
-
       <div style="text-align:center; margin-top: 40px;">
         <button type="submit" class="btn btn-primary" aria-label="Générer et télécharger la présentation PowerPoint">📥 Générer et Télécharger PowerPoint</button>
       </div>
@@ -335,18 +343,25 @@
     "Diapositive brise glace"
   ];
   const endSlides = [
-    "Diapositive Pause",
-    "Diapositive des questions",
-    "Diapositive contact"
+    { title: "Diapositive Pause", isOptional: true },
+    { title: "Diapositive des questions", isOptional: true },
+    { title: "Diapositive contact", isOptional: true }
   ];
 
-  function addSlide(defaultTitle = "") {
+  function addSlide(defaultTitle = "", isOptional = false, checked = true) {
     slideCounter++;
     const container = document.getElementById('slidesContainer');
     const slideDiv = document.createElement('div');
     slideDiv.className = 'slide-item';
     slideDiv.setAttribute('draggable', 'true');
+    slideDiv.dataset.optional = isOptional ? "1" : "0";
     slideDiv.innerHTML = `
+      ${isOptional ? `
+        <span class="slide-option">
+          <input type="checkbox" name="slideOptional${slideCounter}" id="slideOptional${slideCounter}" ${checked ? "checked" : ""} onchange="toggleOptionalSlide(this)">
+          <label for="slideOptional${slideCounter}" style="margin:0;">Inclure</label>
+        </span>
+      ` : ""}
       <button type="button" class="remove-slide" aria-label="Supprimer cette diapositive" onclick="removeSlide(this)">×</button>
       <h4>${defaultTitle ? defaultTitle : `Diapositive ${slideCounter}`}</h4>
       <input type="text" placeholder="Titre de la diapositive" name="slideTitle${slideCounter}" value="${defaultTitle}" required autocomplete="off" />
@@ -400,6 +415,11 @@
     document.getElementById('slideCount').textContent = `${count} diapositive(s)`;
   }
 
+  function toggleOptionalSlide(checkbox) {
+    const slideDiv = checkbox.closest('.slide-item');
+    slideDiv.style.opacity = checkbox.checked ? "1" : "0.4";
+  }
+
   function initDragAndDrop() {
     const container = document.getElementById('slidesContainer');
     Sortable.create(container, {
@@ -412,7 +432,8 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     checkLibraryLoaded();
-    defaultSlides.forEach(title => addSlide(title));
+    defaultSlides.forEach(title => addSlide(title, false));
+    endSlides.forEach(obj => addSlide(obj.title, true, false));
   });
 
   function checkLibraryLoaded() {
@@ -449,15 +470,18 @@
       const title = formData.get('title');
       const author = formData.get('author') || 'Votre nom';
       const themeName = formData.get('theme');
-      const includeEnd = formData.get('includeEndSlides');
       const theme = themes[themeName];
       pptx.author = author;
       pptx.title = title;
       pptx.subject = 'Présentation générée automatiquement';
 
-      // Récupère les diapositives dans l’ordre actuel du DOM
+      // Récupère les diapositives dans l’ordre actuel du DOM et filtre les optionnelles décochées
       const slides = document.querySelectorAll('.slide-item');
       const slidePromises = Array.from(slides).map(async (slideElem) => {
+        if (slideElem.dataset.optional === "1") {
+          const checkbox = slideElem.querySelector('input[type="checkbox"]');
+          if (!checkbox.checked) return;
+        }
         const inputs = slideElem.querySelectorAll('input[type="text"], textarea, select');
         const slideTitle = inputs[0].value.trim();
         const slideContent = inputs[1].value.trim();
@@ -491,7 +515,7 @@
                   x: 5.5, y: 2, w: 4, h: 3,
                   sizing: { type: "contain" }
                 });
-                // Pied de page ajouté ici aussi
+                // Pied de page aussi
                 slide.addText(`application créée par Amélie Silvert avec l'aide de Claude.ai et Perplexity (IA) - ${author}`, {
                   x: 0.5, y: 6.8, w: 9, h: 0.5,
                   fontSize: 10, color: '888888', align: 'center', italic: true
@@ -516,7 +540,7 @@
           });
         }
 
-        // Pied de page sur chaque diapositive (sauf si image avec promesse, on le met dans la promesse)
+        // Pied de page sur chaque diapositive
         if (slideLayout !== 'image') {
           slide.addText(`application créée par Amélie Silvert avec l'aide de Claude.ai et Perplexity (IA) - ${author}`, {
             x: 0.5, y: 6.8, w: 9, h: 0.5,
@@ -526,22 +550,6 @@
       });
 
       await Promise.all(slidePromises);
-
-      // Ajout optionnel des 3 diapositives de fin
-      if (includeEnd === 'on') {
-        for (const titleEnd of endSlides) {
-          const slide = pptx.addSlide();
-          slide.background = { color: theme.background };
-          slide.addText(titleEnd, {
-            x: 0.5, y: 0.5, w: 9, h: 1,
-            fontSize: 28, color: theme.primary, bold: true
-          });
-          slide.addText(`application créée par Amélie Silvert avec l'aide de Claude.ai et Perplexity (IA) - ${author}`, {
-            x: 0.5, y: 6.8, w: 9, h: 0.5,
-            fontSize: 10, color: '888888', align: 'center', italic: true
-          });
-        }
-      }
 
       await pptx.writeFile({ fileName: `${title}.pptx` });
 
