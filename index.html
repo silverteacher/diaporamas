@@ -8,7 +8,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
   body {
     margin: 0; padding: 0;
     font-family: 'Poppins', sans-serif;
@@ -99,7 +98,6 @@
     border-radius: 20px;
     padding: 30px 36px;
     background: #e8f0ff;
-    /* Pas de max-height ni overflow pour scroll sur page entière */
     position: relative;
     z-index: 1;
   }
@@ -267,7 +265,7 @@
 <body>
   <main class="container" role="main" aria-label="Générateur de présentation PowerPoint pastel et moderne avec réorganisation">
     <h1>Générateur de diaporamas</h1>
-    <p class="subtitle">Créez des présentations personnalisées avec images. Glissez-déposez les diapositives pour les réorganiser.Ajoutez ou supprimez celles qui ne vous conviennent pas.</p>
+    <p class="subtitle">Créez des présentations personnalisées avec images. Glissez-déposez les diapositives pour les réorganiser. Ajoutez ou supprimez celles qui ne vous conviennent pas.</p>
 
     <form id="presentationForm" style="opacity: 0.5;">
       <div class="form-group">
@@ -298,6 +296,10 @@
           <button type="button" class="btn btn-secondary" aria-label="Ajouter une nouvelle diapositive" onclick="addSlide()">+ Ajouter une diapositive</button>
           <span id="slideCount" aria-live="polite">0 diapositive(s)</span>
         </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 20px;">
+        <label><input type="checkbox" id="includeEndSlides" name="includeEndSlides" /> Inclure les 3 diapositives de fin</label>
       </div>
 
       <div style="text-align:center; margin-top: 40px;">
@@ -398,6 +400,16 @@
     document.getElementById('slideCount').textContent = `${count} diapositive(s)`;
   }
 
+  function initDragAndDrop() {
+    const container = document.getElementById('slidesContainer');
+    Sortable.create(container, {
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      dragClass: 'sortable-drag',
+      chosenClass: 'sortable-chosen'
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     checkLibraryLoaded();
     defaultSlides.forEach(title => addSlide(title));
@@ -435,10 +447,11 @@
       const pptx = new PptxGenJS();
       const formData = new FormData(document.getElementById('presentationForm'));
       const title = formData.get('title');
-      const author = formData.get('author');
+      const author = formData.get('author') || 'Votre nom';
       const themeName = formData.get('theme');
+      const includeEnd = formData.get('includeEndSlides');
       const theme = themes[themeName];
-      pptx.author = author || 'Générateur PowerPoint';
+      pptx.author = author;
       pptx.title = title;
       pptx.subject = 'Présentation générée automatiquement';
 
@@ -478,6 +491,11 @@
                   x: 5.5, y: 2, w: 4, h: 3,
                   sizing: { type: "contain" }
                 });
+                // Pied de page ajouté ici aussi
+                slide.addText(`application créée par Amélie Silvert avec l'aide de Claude.ai et Perplexity (IA) - ${author}`, {
+                  x: 0.5, y: 6.8, w: 9, h: 0.5,
+                  fontSize: 10, color: '888888', align: 'center', italic: true
+                });
                 resolve();
               };
               reader.readAsDataURL(file);
@@ -488,50 +506,51 @@
               fontSize: 14, color: '#999999',
               align: 'center', valign: 'middle',
               fill: { color: 'F5F5F5' },
-              line: { color: 'CCCCCC', width: 1 }
+              italic: true
             });
           }
         } else {
           slide.addText(slideContent, {
             x: 0.5, y: 1.8, w: 9, h: 5,
-            fontSize: 18, color: '333333', valign: 'top'
+            fontSize: 18, color: '333333'
+          });
+        }
+
+        // Pied de page sur chaque diapositive (sauf si image avec promesse, on le met dans la promesse)
+        if (slideLayout !== 'image') {
+          slide.addText(`application créée par Amélie Silvert avec l'aide de Claude.ai et Perplexity (IA) - ${author}`, {
+            x: 0.5, y: 6.8, w: 9, h: 0.5,
+            fontSize: 10, color: '888888', align: 'center', italic: true
           });
         }
       });
 
-      // Ajoute les diapositives fixes de fin automatiquement
-      endSlides.forEach(title => {
-        const slide = pptx.addSlide();
-        slide.background = { color: theme.background };
-        slide.addText(title, {
-          x: 0.5, y: 0.5, w: 9, h: 1,
-          fontSize: 28, color: theme.primary, bold: true
-        });
-      });
-
       await Promise.all(slidePromises);
 
-      const fileName = title ? `${title.replace(/[^\w\s]/gi, '')}.pptx` : 'presentation.pptx';
-      await pptx.writeFile({ fileName });
+      // Ajout optionnel des 3 diapositives de fin
+      if (includeEnd === 'on') {
+        for (const titleEnd of endSlides) {
+          const slide = pptx.addSlide();
+          slide.background = { color: theme.background };
+          slide.addText(titleEnd, {
+            x: 0.5, y: 0.5, w: 9, h: 1,
+            fontSize: 28, color: theme.primary, bold: true
+          });
+          slide.addText(`application créée par Amélie Silvert avec l'aide de Claude.ai et Perplexity (IA) - ${author}`, {
+            x: 0.5, y: 6.8, w: 9, h: 0.5,
+            fontSize: 10, color: '888888', align: 'center', italic: true
+          });
+        }
+      }
+
+      await pptx.writeFile({ fileName: `${title}.pptx` });
+
       loading.classList.remove('active');
       successMsg.classList.add('active');
-      setTimeout(() => successMsg.classList.remove('active'), 5000);
     } catch (err) {
       loading.classList.remove('active');
-      alert('Erreur lors de la génération : ' + err.message);
-      console.error(err);
+      alert(`Erreur lors de la génération : ${err.message}`);
     }
-  }
-
-  // Initialise SortableJS pour drag & drop
-  function initDragAndDrop() {
-    Sortable.create(document.getElementById('slidesContainer'), {
-      animation: 150,
-      ghostClass: 'sortable-ghost',
-      handle: '.slide-item',
-      filter: '.remove-slide',
-      onEnd: () => updateSlideCount()
-    });
   }
 </script>
 </body>
